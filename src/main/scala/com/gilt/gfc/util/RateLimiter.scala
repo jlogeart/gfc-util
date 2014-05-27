@@ -1,7 +1,7 @@
 package com.gilt.gfc.util
 
 import scala.reflect.BeanProperty
-import com.giltgroupe.util.CircularBuffer
+import com.gilt.gfc.collection.CircularBuffer
 
 /**
  * Used to rate limit writes to, say, mongo.  It's handy if the calling code can do bulk write

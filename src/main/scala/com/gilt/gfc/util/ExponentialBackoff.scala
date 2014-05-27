@@ -1,5 +1,7 @@
 package com.gilt.gfc.util
 
+import com.gilt.gfc.logging.Loggable
+
 /**
  * To avoid tight loops around errors.
  */

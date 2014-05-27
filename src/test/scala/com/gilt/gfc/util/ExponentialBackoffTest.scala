@@ -1,5 +1,6 @@
 package com.gilt.gfc.util
 
+import com.gilt.gfc.logging.Loggable
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.testng.TestNGSuite
 import org.testng.annotations.Test
