@@ -2,16 +2,15 @@ name := "gfc-util"
 
 organization := "com.gilt"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.1"
 
-crossScalaVersions := Seq("2.10.4", "2.9.1", "2.9.2", "2.9.3")
+crossScalaVersions := Seq("2.11.1", "2.10.4")
 
 libraryDependencies ++= Seq(
-  "com.gilt" %% "gfc-collection" % "0.0.1",
-  "com.gilt" %% "gfc-logging" % "0.0.1",
-  "org.testng" % "testng" % "6.0" % "test",
-  "org.scalatest" %% "scalatest" % "1.9.2" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.10.1" % "test" 
+  "com.gilt" %% "gfc-collection" % "0.0.2",
+  "com.gilt" %% "gfc-logging" % "0.0.2",
+  "org.scalatest" %% "scalatest" % "2.1.7" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
 )
 
 publishMavenStyle := true

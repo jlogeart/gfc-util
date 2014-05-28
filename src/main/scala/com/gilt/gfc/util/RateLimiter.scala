@@ -1,6 +1,6 @@
 package com.gilt.gfc.util
 
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 import com.gilt.gfc.collection.CircularBuffer
 
 /**

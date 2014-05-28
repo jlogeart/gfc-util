@@ -1,13 +1,10 @@
 package com.gilt.gfc.util
 
 import com.gilt.gfc.logging.Loggable
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.testng.TestNGSuite
-import org.testng.annotations.Test
+import org.scalatest.{FunSuite, Matchers}
 
-class ExponentialBackoffTest extends TestNGSuite with ShouldMatchers {
-  @Test
-  def testLoopWithBackoffOnErrorWhile() {
+class ExponentialBackoffTest extends FunSuite with Matchers {
+  test("loopWithBackoffOnErrorWhile") {
     new ExponentialBackoff with Loggable {
       override val backoffMaxTimeMs = 10 * 1000L
 
@@ -23,8 +20,7 @@ class ExponentialBackoffTest extends TestNGSuite with ShouldMatchers {
     }
   }
 
-  @Test
-  def testRetryOnErrorEventuallySucceeds() {
+  test("Retry on error eventually succeeds") {
     new ExponentialBackoff with Loggable {
       override val backoffMaxTimeMs = 10 * 1000L
 
@@ -40,19 +36,18 @@ class ExponentialBackoffTest extends TestNGSuite with ShouldMatchers {
     }
   }
 
-  @Test
-  def testRetryUpToExitsAfterMaxRetry() {
+  test("Retry up to exits after max retry") {
     new ExponentialBackoff with Loggable {
       override val backoffMaxTimeMs = 10 * 1000L
 
       var numTries = 0
 
-      val thrown = evaluating {
+      val thrown = the [Exception] thrownBy {
         retryUpTo(3) {
           numTries += 1
           sys.error("Boo!")
         }
-      } should produce[Exception]
+      }
 
       thrown.getMessage should startWith("Max number of retries")
 

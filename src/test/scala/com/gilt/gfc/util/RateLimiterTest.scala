@@ -1,13 +1,11 @@
 package com.gilt.gfc.util
 
-import org.testng.annotations.Test
-import org.scalatest.testng.TestNGSuite
+import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 
-class RateLimiterTest extends TestNGSuite with Checkers {
+class RateLimiterTest extends FunSuite with Checkers {
 
-  @Test
-  def testBasics() {
+  test("Basics") {
     val seconds = 2   // < 2 seconds is not so great for the 1hz limiter
     for (hz <- List(1, 10, 100, 200)) {
       val limiter = new RateLimiter(hz)
@@ -25,8 +23,7 @@ class RateLimiterTest extends TestNGSuite with Checkers {
     }
   }
 
-  @Test
-  def testUnlimitedMode() {
+  test("Unlimited mode") {
     val limiter = new RateLimiter(0)
     var counter = 0
     val start = System.currentTimeMillis
