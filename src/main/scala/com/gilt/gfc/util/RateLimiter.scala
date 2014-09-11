@@ -4,8 +4,7 @@ import scala.beans.BeanProperty
 import com.gilt.gfc.collection.CircularBuffer
 
 /**
- * Used to rate limit writes to, say, mongo.  It's handy if the calling code can do bulk write
- * operations through the limiter, which rate-limits how fast they happen.
+ * Used to rate-limit calls to a work function, e.g. that writes to a db.
  *
  * Note you can disable the rate limiter by setting the frequency to 0.
  *
@@ -39,9 +38,11 @@ class RateLimiter(@BeanProperty val maxFreqHz: Int) {
       buffer.add(System.nanoTime)     // record the timestamp first! otherwise delays between invocations don't count
       if (buffer.size > 1) {          // at least 2 samples required to be able to define this
         val sum = buffer.newest - buffer.oldest     // Sum of all intervals
-        val sleepMs = math.round(((buffer.size / maxFreqNanoHz) - sum)/1000000)   // how long sleep to achieve maxFreqHz
-        if (sleepMs > 0) {
-          Thread.sleep(sleepMs)
+        val sleepTime = (buffer.size / maxFreqNanoHz) - sum
+        val sleepMs = math.round((sleepTime)/1000000)   // how long sleep to achieve maxFreqHz
+        val sleepNs = math.round((sleepTime)%1000000).toInt
+        if (sleepMs > 0 || sleepNs > 0) {
+          Thread.sleep(sleepMs, sleepNs)
         }
       }
       workFunction    // do what we are meant to do and return result

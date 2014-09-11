@@ -2,16 +2,21 @@ name := "gfc-util"
 
 organization := "com.gilt"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
-crossScalaVersions := Seq("2.11.1", "2.10.4")
+crossScalaVersions := Seq("2.11.2", "2.10.4")
 
 libraryDependencies ++= Seq(
   "com.gilt" %% "gfc-collection" % "0.0.2",
   "com.gilt" %% "gfc-logging" % "0.0.2",
-  "org.scalatest" %% "scalatest" % "2.1.7" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
+  "com.gilt" %% "gfc-time" % "0.0.3" % "test",
+  "org.scalatest" %% "scalatest" % "2.2.2" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
 )
+
+instrumentSettings
+
+ScoverageKeys.highlighting := true
 
 publishMavenStyle := true
 

@@ -12,8 +12,6 @@ trait ExponentialBackoff extends Loggable {
    */
   protected def backoffMaxTimeMs: Long
 
-  private[this] var currentSleepTimeMs = 1L
-
   /**
    * Loops while loopCondition evaluates to true,
    * reports errors and backs off on error before next iteration
@@ -21,14 +19,14 @@ trait ExponentialBackoff extends Loggable {
    */
   protected[this] final def loopWithBackoffOnErrorWhile(loopCondition: => Boolean)
                                                        (loopBody: => Unit) {
+    var currentSleepTimeMs = 1L
     while(loopCondition) {
       try {
         loopBody
-        backoffReset() // successful iteration
       } catch {
         case e: Throwable =>
           error(e.getMessage, e)
-          backoffOnError()
+          currentSleepTimeMs = backoffOnError(currentSleepTimeMs)
       }
     }
   }
@@ -58,16 +56,14 @@ trait ExponentialBackoff extends Loggable {
     }
   }
 
-  protected[this] final def backoffReset() {
-    currentSleepTimeMs = 1L
-  }
+  private final def backoffOnError(sleepTimeMs: Long): Long = {
+    try { Thread.sleep(sleepTimeMs) } catch { case ie: InterruptedException => /* ignore interrupted exceptions */ }
 
-  protected[this] final def backoffOnError() {
-    try { Thread.sleep(currentSleepTimeMs) } catch { case ie: InterruptedException => /* ignore interrupted exceptions */ }
-
-    currentSleepTimeMs *= 2
-    if (currentSleepTimeMs > backoffMaxTimeMs) {
-      currentSleepTimeMs = backoffMaxTimeMs
+    val nextSleepTimeMs = 2L * sleepTimeMs
+    if (nextSleepTimeMs > backoffMaxTimeMs) {
+      backoffMaxTimeMs
+    } else {
+      nextSleepTimeMs
     }
   }
 }
