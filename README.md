@@ -49,25 +49,25 @@ e.g. for when ConcurrentHashMap.putIfAbsent(new Something()) may result in a Som
 instance that need to be closed if another thread's putIfAbsent was successful.
 
 
-   val inputStreamCache = new SingletonCache[File]
+    val inputStreamCache = new SingletonCache[File]
 
-   val file = new File("foo")
+    val file = new File("foo")
 
-   val is: InputStream = inputStreamCache(file) {
-     new FileInputStream(file)
-   }
+    val is: InputStream = inputStreamCache(file) {
+      new FileInputStream(file)
+    }
 
 ### Throwables
 
 Utility to unwind nested Throwable stacks
 
-  val e1 = new Exception()
-  val e2 = new Exception(e1)
-  val e3 = new Exception(e3)
+    val e1 = new Exception()
+    val e2 = new Exception(e1)
+    val e3 = new Exception(e3)
 
-  val t: Throwable = Throwables.rootCause(e3)
+    val t: Throwable = Throwables.rootCause(e3)
 
-  t should be theSameInstanceAs e1
+    t should be theSameInstanceAs e1
 
 ## License
 Copyright 2014 Gilt Groupe, Inc.
