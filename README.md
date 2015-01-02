@@ -4,7 +4,7 @@ A library that contains a few scala utility classes. Part of the gilt foundation
 
 ## Example Usage
 
-### ExponentialBackoff
+### com.gilt.gfc.util.ExponentialBackoff
 
 Allows periodic retry of a potentially failing function with an exponentially growing wait period:
 
@@ -29,7 +29,7 @@ Allows periodic retry of a potentially failing function with an exponentially gr
       def getValue(maxAttempts: Long): String = retryUpTo(maxAttempts)(maybeFailing).toString
     }
 
-### RateLimiter/ThreadSafeRateLimiter
+### com.gilt.gfc.util.RateLimiter and com.gilt.gfc.util.ThreadSafeRateLimiter
 
 RateLimiter can be used to rate-limit calls to a work function, e.g. a function that writes to a db.
 ThreadSafeRateLimiter is a thread safe version of RateLimiter, that synchronizes calls to the limit function.
@@ -42,7 +42,7 @@ ThreadSafeRateLimiter is a thread safe version of RateLimiter, that synchronizes
     }
 
 
-### SingletonCache
+### com.gilt.gfc.util.SingletonCache
 
 A cache for objects that need their lifecycle to be managed and can't be just throw-away,
 e.g. for when ConcurrentHashMap.putIfAbsent(new Something()) may result in a Something
@@ -57,7 +57,7 @@ instance that need to be closed if another thread's putIfAbsent was successful.
       new FileInputStream(file)
     }
 
-### Throwables
+### com.gilt.gfc.util.Throwables
 
 Utility to unwind nested Throwable stacks
 
