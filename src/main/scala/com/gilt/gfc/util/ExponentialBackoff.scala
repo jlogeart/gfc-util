@@ -8,6 +8,11 @@ import com.gilt.gfc.logging.Loggable
 trait ExponentialBackoff extends Loggable {
 
   /**
+   * Optional setting to wait a minimum time before a retry, defaulting to 1ms
+   */
+  protected def backoffMinTimeMs: Long = 1L
+
+  /**
    * To be injected, max backoff time in millis.
    */
   protected def backoffMaxTimeMs: Long
@@ -19,7 +24,7 @@ trait ExponentialBackoff extends Loggable {
    */
   protected[this] final def loopWithBackoffOnErrorWhile(loopCondition: => Boolean)
                                                        (loopBody: => Unit) {
-    var currentSleepTimeMs = 1L
+    var currentSleepTimeMs = backoffMinTimeMs
     while(loopCondition) {
       try {
         loopBody

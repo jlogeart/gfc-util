@@ -78,6 +78,24 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
     }
   }
 
+  test("backoff sleeps the min duration") {
+    new ExponentialBackoff with Loggable {
+      override val backoffMinTimeMs = 64L
+      override val backoffMaxTimeMs = 150L
+
+      val timestamps = new scala.collection.mutable.ListBuffer[Long]()
+
+      retry {
+        timestamps += System.currentTimeMillis()
+        if (timestamps.size < 5) sys.error("")
+      }
+
+      val lapses = timestamps.sliding(2).toSeq.map(t => t(1) - t(0))
+      lapses.size should be (4)
+      lapses.foreach(_ should be >= 64L)
+    }
+  }
+
   test("backoff maxes out") {
     new ExponentialBackoff with Loggable {
       override val backoffMaxTimeMs = 100L
