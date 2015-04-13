@@ -5,6 +5,7 @@ import com.gilt.gfc.logging.Loggable
 /**
  * To avoid tight loops around errors.
  */
+@deprecated("Use the more flexible Retry functions", "0.0.6")
 trait ExponentialBackoff extends Loggable {
 
   /**
