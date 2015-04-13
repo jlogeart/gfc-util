@@ -69,6 +69,7 @@ object Retry {
       Try(f) match {
         case Success(t) => t
         case Failure(NonFatal(e)) =>
+          log(e)
           val delay = Seq(initialDelay, maxDelay, maxRetryTimeout.timeLeft).min
           try {
             Thread.sleep(delay.toMillis, (delay.toNanos % 1000000L).toInt)
