@@ -57,7 +57,7 @@ object Retry {
   @tailrec
   def retryWithExponentialDelay[T](maxRetryTimes: Long = Long.MaxValue,
                                    maxRetryTimeout: Deadline = 1 day fromNow,
-                                   initialDelay: Duration = 1 nanosecond,
+                                   initialDelay: Duration = 1 millisecond,
                                    maxDelay: FiniteDuration = 1 day,
                                    exponentFactor: Double = 2)
                                   (f: => T)
@@ -72,7 +72,9 @@ object Retry {
           log(e)
           val delay = Seq(initialDelay, maxDelay, maxRetryTimeout.timeLeft).min
           try {
-            Thread.sleep(delay.toMillis, (delay.toNanos % 1000000L).toInt)
+            if (delay.toNanos > 0L) {
+              Thread.sleep(delay.toMillis, (delay.toNanos % 1000000L).toInt)
+            }
           } catch {
             case ie: InterruptedException => /* ignore interrupted exceptions */
           }

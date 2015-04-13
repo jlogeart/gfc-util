@@ -49,7 +49,7 @@ class RetryTest extends FunSuite with Matchers {
     val thrown = the [RuntimeException] thrownBy Retry.retryWithExponentialDelay(maxRetryTimeout = 100 millis fromNow)(function)
     thrown.getMessage shouldBe "boom"
     (System.currentTimeMillis() - start) should be (120L +- 20L)
-    count shouldBe 28
+    count shouldBe 8
   }
 
 
