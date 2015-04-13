@@ -1,5 +1,8 @@
 package com.gilt.gfc.util
 
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.LockSupport
+
 import scala.annotation.tailrec
 import scala.concurrent.duration._
 import scala.util.{Success, Failure, Try}
@@ -71,12 +74,16 @@ object Retry {
         case Failure(NonFatal(e)) =>
           log(e)
           val delay = Seq(initialDelay, maxDelay, maxRetryTimeout.timeLeft).min
-          try {
-            if (delay.toNanos > 0L) {
-              Thread.sleep(delay.toMillis, (delay.toNanos % 1000000L).toInt)
+          val delayNs = delay.toNanos
+          // Under 10ms we use the more precise (but also more spurious) LockSupport.parkNanos, otherwise the more reliable Thread.sleep
+          if (delayNs < 10000000L) {
+            LockSupport.parkNanos(delayNs)
+          } else {
+            try {
+              Thread.sleep(delayNs / 1000000L, (delayNs % 1000000).toInt)
+            } catch {
+              case ie: InterruptedException => /* ignore interrupted exceptions */
             }
-          } catch {
-            case ie: InterruptedException => /* ignore interrupted exceptions */
           }
           retryWithExponentialDelay(maxRetryTimes - 1, maxRetryTimeout, delay * exponentFactor, maxDelay, exponentFactor)(f)(log)
         case Failure(t) => throw t
