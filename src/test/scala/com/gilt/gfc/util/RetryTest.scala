@@ -30,7 +30,7 @@ class RetryTest extends FunSuite with Matchers {
     Retry.retryWithExponentialDelay()(functions.next.apply) shouldBe "yay"
   }
 
-  test("retryWithExponentialDelay should retry until maxRetries") {
+  test("retryWithExponentialDelay should retry until maxRetryTimes") {
     val functions: Iterator[() => String] = Iterator(failF1 _, failF2 _, succeedF _)
 
     val thrown = the [Exception] thrownBy Retry.retryWithExponentialDelay(maxRetryTimes = 1)(functions.next.apply)
@@ -38,12 +38,17 @@ class RetryTest extends FunSuite with Matchers {
   }
 
   test("retryWithExponentialDelay should retry until maxRetryTimeout") {
-    val functions: Iterator[() => String] = Iterator.continually(failF1 _)
+    var count = 0
+    def function: String = {
+      count += 1
+      failF1
+    }
 
     val start = System.currentTimeMillis()
-    val thrown = the [RuntimeException] thrownBy Retry.retryWithExponentialDelay(maxRetryTimeout = 100 millis fromNow)(functions.next.apply)
+    val thrown = the [RuntimeException] thrownBy Retry.retryWithExponentialDelay(maxRetryTimeout = 100 millis fromNow)(function)
     thrown.getMessage shouldBe "boom"
     (System.currentTimeMillis() - start) should be (120L +- 20L)
+    count shouldBe 28
   }
 
 

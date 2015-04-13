@@ -35,7 +35,9 @@ object Retry {
   /**
    * Retries a function until it succeeds, a maximum number of retries has been reached, or a retry timeout
    * has been reached. Each retry iteration is being exponentially delayed. The delay grows from a given
-   * start value and by a given factor until it reaches a given maximum delay value.
+   * start value and by a given factor until it reaches a given maximum delay value. If maxRetryTimeout is reached,
+   * the last function call is at the point of the timeout. E.g. if the initial delay is 1 second, the retry timeout 10 seconds
+   * and all other parameters at their default, the function will be retried after 1, 3 (1+2), 7 (1+2+4) and finally 10 seconds before it fails.
    *
    * @param maxRetryTimes The maximum number of retries, defaults to Long.MaxValue
    * @param maxRetryTimeout The retry Deadline until which to retry the function, defaults to 1 day from now
