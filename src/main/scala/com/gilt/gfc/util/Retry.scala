@@ -23,7 +23,7 @@ object Retry {
   @tailrec
   def retry[T](maxRetryTimes: Long = Long.MaxValue)
               (f: => T)
-              (log: Throwable => Unit = _.printStackTrace): T = {
+              (implicit log: Throwable => Unit = _.printStackTrace): T = {
     if(maxRetryTimes <= 0) {
       f
     } else {
@@ -61,7 +61,7 @@ object Retry {
                                    maxDelay: FiniteDuration = 1 day,
                                    exponentFactor: Double = 2)
                                   (f: => T)
-                                  (log: Throwable => Unit = _.printStackTrace): T = {
+                                  (implicit log: Throwable => Unit = _.printStackTrace): T = {
     require(exponentFactor >= 1)
     if (maxRetryTimes <= 0 || maxRetryTimeout.isOverdue()) {
       f

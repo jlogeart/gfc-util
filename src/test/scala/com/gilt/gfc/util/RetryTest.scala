@@ -7,6 +7,7 @@ import scala.collection.immutable.VectorBuilder
 import scala.concurrent.duration._
 
 class RetryTest extends FunSuite with Matchers {
+  implicit def logSuppressor(t: Throwable): Unit = {}
   def succeedF: String = "yay"
   def failF1: String = throw new RuntimeException("boom")
   def failF2: String = throw new RuntimeException("crash")
