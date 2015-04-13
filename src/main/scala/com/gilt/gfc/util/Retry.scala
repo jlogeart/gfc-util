@@ -17,16 +17,21 @@ object Retry {
    *
    * @param maxRetryTimes The maximum number of retries, defaults to Long.MaxValue
    * @param f The function to (re)try
+   * @param log An optional log function to report failed iterations to. By default prints the thrown Exception to the console.
    * @return A successful T if the function succeeded within maxRetryTimes or the last thrown NonFatal Exception otherwise. If the function throws a fatal Error, it is not retried and the error is rethrown.
    */
   @tailrec
-  def retry[T](maxRetryTimes: Long = Long.MaxValue)(f: => T): T = {
+  def retry[T](maxRetryTimes: Long = Long.MaxValue)
+              (f: => T)
+              (log: Throwable => Unit = _.printStackTrace): T = {
     if(maxRetryTimes <= 0) {
       f
     } else {
       Try(f) match {
         case Success(t) => t
-        case Failure(NonFatal(e)) => retry(maxRetryTimes - 1)(f)
+        case Failure(NonFatal(e)) =>
+          log(e)
+          retry(maxRetryTimes - 1)(f)(log)
         case Failure(t) => throw t
       }
     }
@@ -45,6 +50,7 @@ object Retry {
    * @param maxDelay The maximum delay value, defaults to 1 day
    * @param exponentFactor The factor by which the delay increases between retry iterations
    * @param f The function to (re)try
+   * @param log An optional log function to report failed iterations to. By default prints the thrown Exception to the console.
    * @return A successful T if the function succeeded within maxRetryTimes and maxRetryTimeout or the last thrown NonFatal Exception otherwise.
    *         If the function throws a fatal Error, it is not retried and the error is rethrown.
    */
@@ -54,7 +60,8 @@ object Retry {
                                    initialDelay: Duration = 1 nanosecond,
                                    maxDelay: FiniteDuration = 1 day,
                                    exponentFactor: Double = 2)
-                                  (f: => T): T = {
+                                  (f: => T)
+                                  (log: Throwable => Unit = _.printStackTrace): T = {
     require(exponentFactor >= 1)
     if (maxRetryTimes <= 0 || maxRetryTimeout.isOverdue()) {
       f
@@ -68,7 +75,7 @@ object Retry {
           } catch {
             case ie: InterruptedException => /* ignore interrupted exceptions */
           }
-          retryWithExponentialDelay(maxRetryTimes - 1, maxRetryTimeout, delay * exponentFactor, maxDelay, exponentFactor)(f)
+          retryWithExponentialDelay(maxRetryTimes - 1, maxRetryTimeout, delay * exponentFactor, maxDelay, exponentFactor)(f)(log)
         case Failure(t) => throw t
       }
     }

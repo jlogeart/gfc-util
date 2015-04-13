@@ -4,30 +4,32 @@ A library that contains a few scala utility classes. Part of the gilt foundation
 
 ## Example Usage
 
+
 ### com.gilt.gfc.util.ExponentialBackoff
 
-Allows periodic retry of a potentially failing function with an exponentially growing wait period:
-
-    class SomeResource extends ExponentialBackoff {
-      // Grow backoff exponentially from 1ms until it hits 1s, then remain at that rate,
-      // i.e. backoff will be: 1ms, 2ms, 4ms, 8ms, 16ms, 32ms, 64ms, 128ms, 256ms, 512ms, 1s, 1s, ...
-      override val backoffMaxTimeMs = 1000L
-
-      private def maybeFailing: Long = {
-        val time = System.currentTimeMillis
-        if(time % 2 == 0) time else throw new RuntimeException("bang!")
-      }
-
-      /**
-       * Retry (potentially infinitely) until the function succeeds
-       */
-      def getValue: String = retry(maybeFailing).toString
-
-      /**
-       * Retry up to maxAttempts for the function to succeeds
-       */
-      def getValue(maxAttempts: Long): String = retryUpTo(maxAttempts)(maybeFailing).toString
-    }
+Allows a retry of a potentially failing function with or without an exponentially growing wait period:
+```
+    import scala.concurrent.duration._
+    import com.gilt.gfc.concurrent.ScalaFutures._
+    def remoteCall: Future[Response] = ???
+    // Retry the remote call up to 10 times until it succeeds
+    val response: Future[Response] = retry(10)(remoteCall)
+```
+```
+    import scala.concurrent.duration._
+    import com.gilt.gfc.concurrent.ScalaFutures._
+    def remoteCall: Future[Response] = ???
+    // Retry the remote call up to 10 times until it succeeds, with an exponential backoff,
+    // starting at 10 ms and doubling each iteration until it reaches 1 second, i.e.
+    // 10ms, 20ms, 40ms, 80ms, 160ms, 320ms, 640ms, 1s, 1s, 1s
+    val response: Future[Response] = retryWithExponentialDelay(maxRetryTimes = 10,
+                                                               maxRetryTimeout = 5 minutes fromNow,
+                                                               initialDelay = 10 millis,
+                                                               maxDelay = 1 second,
+                                                               exponentFactor = 2) {
+      remoteCall
+     }
+```
 
 ### com.gilt.gfc.util.RateLimiter and com.gilt.gfc.util.ThreadSafeRateLimiter
 
