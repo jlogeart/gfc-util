@@ -5,7 +5,7 @@ A library that contains a few scala utility classes. Part of the gilt foundation
 ## Example Usage
 
 
-### com.gilt.gfc.util.ExponentialBackoff
+### com.gilt.gfc.util.Retry
 
 Allows a retry of a potentially failing function with or without an exponentially growing wait period:
 ```
