@@ -21,7 +21,7 @@ class RateLimiterTest extends FunSuite with Checkers with Matchers {
       // This seems the only reliable test in hudson.
       // Was seeing very large differences like counter == 207, seconds*hz == 400
       // (Due to context switching?)
-      assert(counter <= seconds * hz, "counter = %d, hz = %d".format(counter, seconds * hz))
+      assert(counter <= seconds * hz + (hz / 10), "counter = %d, hz = %d".format(counter, seconds * hz))
     }
   }
 
