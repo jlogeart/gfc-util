@@ -57,11 +57,11 @@ trait ExponentialBackoff extends Loggable {
   }
 
   /**
-   * Loops until given operation succeeds up to maxRetryTimes.
+   * Loops until given operation succeeds up to maxTryTimes.
    */
-  protected[this] final def retryUpTo[T](maxRetryTimes: Long)
+  protected[this] final def retryUpTo[T](maxTryTimes: Long)
                                         (operation: => T): T = {
-    Retry.retryWithExponentialDelay(maxRetryTimes = maxRetryTimes,
+    Retry.retryWithExponentialDelay(maxRetryTimes = maxTryTimes - 1,
                                     initialDelay = backoffMinTimeMs millis,
                                     maxDelay = backoffMaxTimeMs millis)(
                                     operation)(

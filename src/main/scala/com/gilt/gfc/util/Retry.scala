@@ -18,7 +18,9 @@ object Retry {
   /**
    * Retries a function until it succeeds or a maximum number of retries has been reached.
    *
-   * @param maxRetryTimes The maximum number of retries, defaults to Long.MaxValue
+   * @param maxRetryTimes The maximum number of retries, defaults to Long.MaxValue. The function f is called at most maxRetryTimes + 1 times.
+   *                      In other words, iff maxRetryTimes == 0, f will be called exactly once, iff maxRetryTimes == 1, it will be called at
+   *                      most twice, etc.
    * @param f The function to (re)try
    * @param log An optional log function to report failed iterations to. By default prints the thrown Exception to the console.
    * @return A successful T if the function succeeded within maxRetryTimes or the last thrown NonFatal Exception otherwise. If the function throws a fatal Error, it is not retried and the error is rethrown.
@@ -43,7 +45,9 @@ object Retry {
    * the last function call is at the point of the timeout. E.g. if the initial delay is 1 second, the retry timeout 10 seconds
    * and all other parameters at their default, the function will be retried after 1, 3 (1+2), 7 (1+2+4) and finally 10 seconds before it fails.
    *
-   * @param maxRetryTimes The maximum number of retries, defaults to Long.MaxValue
+   * @param maxRetryTimes The maximum number of retries, defaults to Long.MaxValue. The function f is called at most maxRetryTimes + 1 times.
+   *                      In other words, iff maxRetryTimes == 0, f will be called exactly once, iff maxRetryTimes == 1, it will be called at
+   *                      most twice, etc.
    * @param maxRetryTimeout The retry Deadline until which to retry the function, defaults to 1 day from now
    * @param initialDelay The initial delay value, defaults to 1 nanosecond
    * @param maxDelay The maximum delay value, defaults to 1 day
@@ -61,7 +65,7 @@ object Retry {
                                    exponentFactor: Double = 2)
                                   (f: => T)
                                   (implicit log: Throwable => Unit = _.printStackTrace): T = {
-    require(exponentFactor >= 1)
+    require(exponentFactor >= 1.0)
     Try(f) match {
       case Success(t) => t
       case Failure(NonFatal(e)) if (maxRetryTimes > 0 && !maxRetryTimeout.isOverdue) =>
