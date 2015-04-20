@@ -8,7 +8,6 @@ crossScalaVersions := Seq("2.11.5", "2.10.4")
 
 libraryDependencies ++= Seq(
   "com.gilt" %% "gfc-collection" % "0.0.3",
-  "com.gilt" %% "gfc-logging" % "0.0.2",
   "com.gilt" %% "gfc-time" % "0.0.4" % "test",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
   "org.scalacheck" %% "scalacheck" % "1.12.2" % "test"

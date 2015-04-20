@@ -1,12 +1,11 @@
 package com.gilt.gfc.util
 
-import com.gilt.gfc.logging.Loggable
-
 /**
  * To avoid tight loops around errors.
  */
 @deprecated("Use the more flexible Retry functions", "0.0.6")
-trait ExponentialBackoff extends Loggable {
+trait ExponentialBackoff {
+  def error(message: => String, ex: Throwable): Unit
 
   /**
    * Optional setting to wait a minimum time before a retry, defaulting to 1ms
