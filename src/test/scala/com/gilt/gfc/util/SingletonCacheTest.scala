@@ -50,4 +50,22 @@ class SingletonCacheTest extends FunSuite with Matchers {
     values should contain (val1)
     values should contain (val2)
   }
+
+  test("asMap") {
+    val cache = new SingletonCache[String]()
+
+    val val1 = UUID.randomUUID()
+    val val2 = UUID.randomUUID()
+    cache("one") { val1 }
+    cache("two") { val2 }
+
+    val asMap = cache.asMap[UUID]
+    asMap.get("one") shouldBe Some(val1)
+    asMap.get("two") shouldBe Some(val2)
+
+    cache("three") { UUID.randomUUID() }
+
+    asMap.size shouldBe 2
+    cache.asMap.size shouldBe 3
+  }
 }

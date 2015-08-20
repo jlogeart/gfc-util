@@ -28,6 +28,10 @@ class SingletonCache[K] {
 
   def values[V]: Iterable[V] = instanceCache.values.map(_.instance.asInstanceOf[V])
 
+  def asMap[V]: Map[K, V] = instanceCache.toMap.map {
+    case (k, v) => k -> v.instance.asInstanceOf[V]
+  }
+
   // scala has a nice 'lazy' implementation that is both efficient and safe,
   // based on oft-criticized double-checked lock pattern except that it's actually done correctly:)
   private[this] class CachedValue[V](var generator: () => V) {
