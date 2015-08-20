@@ -13,11 +13,9 @@ libraryDependencies ++= Seq(
   "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
 )
 
-releaseSettings
+releaseCrossBuild := true
 
-ReleaseKeys.crossBuild := true
-
-ReleaseKeys.publishArtifactsAction := PgpKeys.publishSigned.value
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 publishMavenStyle := true
 
