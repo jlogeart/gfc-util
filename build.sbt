@@ -2,15 +2,15 @@ name := "gfc-util"
 
 organization := "com.gilt"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.7"
 
-crossScalaVersions := Seq("2.11.5", "2.10.4")
+crossScalaVersions := Seq("2.11.7", "2.10.5")
 
 libraryDependencies ++= Seq(
   "com.gilt" %% "gfc-collection" % "0.0.3",
   "com.gilt" %% "gfc-time" % "0.0.4" % "test",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.12.2" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.5" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
 )
 
 releaseSettings

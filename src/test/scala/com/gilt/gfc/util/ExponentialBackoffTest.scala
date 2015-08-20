@@ -53,8 +53,6 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
         }
       }
 
-      thrown.getMessage should startWith("Max number of retries")
-
       numTries should be(3)
     }
   }

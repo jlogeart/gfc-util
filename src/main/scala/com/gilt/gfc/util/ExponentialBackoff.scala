@@ -22,9 +22,22 @@ trait ExponentialBackoff {
    * reports errors and backs off on error before next iteration
    * of the loop.
    */
+  @deprecated("Use the more flexible Retry functions", "0.0.6")
   protected[this] final def loopWithBackoffOnErrorWhile(loopCondition: => Boolean)
                                                        (loopBody: => Unit) {
     var currentSleepTimeMs = backoffMinTimeMs
+
+    def backoffOnError(sleepTimeMs: Long): Long = {
+      try { Thread.sleep(sleepTimeMs) } catch { case ie: InterruptedException => /* ignore interrupted exceptions */ }
+
+      val nextSleepTimeMs = 2L * sleepTimeMs
+      if (nextSleepTimeMs > backoffMaxTimeMs) {
+        backoffMaxTimeMs
+      } else {
+        nextSleepTimeMs
+      }
+    }
+
     while(loopCondition) {
       try {
         loopBody
@@ -44,31 +57,14 @@ trait ExponentialBackoff {
   }
 
   /**
-   * Loops until given operation succeeds up to maxRetryTimes.
+   * Loops until given operation succeeds up to maxTryTimes.
    */
-  protected[this] final def retryUpTo[T](maxRetryTimes: Long)
+  protected[this] final def retryUpTo[T](maxTryTimes: Long)
                                         (operation: => T): T = {
-    var numRetries = 0L
-    var result = Option.empty[T]
-
-    loopWithBackoffOnErrorWhile(!result.isDefined && (numRetries < maxRetryTimes)) {
-      numRetries += 1
-      result = Some(operation)
-    }
-
-    result.getOrElse {
-      sys.error("Max number of retries reached [%d], operation aborted".format(maxRetryTimes))
-    }
-  }
-
-  private final def backoffOnError(sleepTimeMs: Long): Long = {
-    try { Thread.sleep(sleepTimeMs) } catch { case ie: InterruptedException => /* ignore interrupted exceptions */ }
-
-    val nextSleepTimeMs = 2L * sleepTimeMs
-    if (nextSleepTimeMs > backoffMaxTimeMs) {
-      backoffMaxTimeMs
-    } else {
-      nextSleepTimeMs
-    }
+    Retry.retryWithExponentialDelay(maxRetryTimes = maxTryTimes - 1,
+                                    initialDelay = backoffMinTimeMs millis,
+                                    maxDelay = backoffMaxTimeMs millis)(
+                                    operation)(
+                                    error)
   }
 }
