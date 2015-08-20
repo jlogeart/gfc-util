@@ -3,7 +3,7 @@ package com.gilt.gfc.util
 /**
  * To avoid tight loops around errors.
  */
-@deprecated("Use the more flexible Retry functions", "0.0.6")
+@deprecated("Use the more flexible Retry functions", "0.1.0")
 trait ExponentialBackoff {
   def error(message: => String, ex: Throwable): Unit
 
