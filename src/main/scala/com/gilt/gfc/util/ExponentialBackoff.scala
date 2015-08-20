@@ -1,12 +1,14 @@
 package com.gilt.gfc.util
 
 import scala.concurrent.duration._
-import com.gilt.gfc.logging.Loggable
 
 /**
  * To avoid tight loops around errors.
  */
-trait ExponentialBackoff extends Loggable {
+@deprecated("Use the more flexible Retry functions", "0.1.0")
+trait ExponentialBackoff {
+  def error(ex: Throwable): Unit
+
   /**
    * Optional setting to wait a minimum time before a retry, defaulting to 1ms
    */
@@ -43,7 +45,7 @@ trait ExponentialBackoff extends Loggable {
         loopBody
       } catch {
         case e: Throwable =>
-          error(e.getMessage, e)
+          error(e)
           currentSleepTimeMs = backoffOnError(currentSleepTimeMs)
       }
     }
