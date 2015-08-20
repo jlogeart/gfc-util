@@ -7,7 +7,7 @@ import org.scalatest.{FunSuite, Matchers}
 class ExponentialBackoffTest extends FunSuite with Matchers {
   test("loopWithBackoffOnErrorWhile") {
     new ExponentialBackoff {
-      override def error(message: => String, ex: Throwable) = {}
+      override def error(ex: Throwable) = {}
       override val backoffMaxTimeMs = 10 * 1000L
 
       val startTime = System.currentTimeMillis
@@ -24,7 +24,7 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
 
   test("Retry on error eventually succeeds") {
     new ExponentialBackoff {
-      override def error(message: => String, ex: Throwable) = {}
+      override def error(ex: Throwable) = {}
       override val backoffMaxTimeMs = 10 * 1000L
 
       var numTries = 0
@@ -41,7 +41,7 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
 
   test("Retry up to exits after max retry") {
     new ExponentialBackoff {
-      override def error(message: => String, ex: Throwable) = {}
+      override def error(ex: Throwable) = {}
       override val backoffMaxTimeMs = 10 * 1000L
 
       var numTries = 0
@@ -59,7 +59,7 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
 
   test("backoff grows exponentially") {
     new ExponentialBackoff {
-      override def error(message: => String, ex: Throwable) = {}
+      override def error(ex: Throwable) = {}
       override val backoffMaxTimeMs = 10 * 1000L
 
       val timestamps = new scala.collection.mutable.ListBuffer[Long]()
@@ -81,7 +81,7 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
 
   test("backoff sleeps the min duration") {
     new ExponentialBackoff {
-      override def error(message: => String, ex: Throwable) = {}
+      override def error(ex: Throwable) = {}
       override val backoffMinTimeMs = 64L
       override val backoffMaxTimeMs = 150L
 
@@ -100,7 +100,7 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
 
   test("backoff maxes out") {
     new ExponentialBackoff {
-      override def error(message: => String, ex: Throwable) = {}
+      override def error(ex: Throwable) = {}
       override val backoffMaxTimeMs = 100L
 
       val timestamps = new scala.collection.mutable.ListBuffer[Long]()
@@ -118,7 +118,7 @@ class ExponentialBackoffTest extends FunSuite with Matchers {
 
   test("backoff is side effect free") {
     new ExponentialBackoff {
-      override def error(message: => String, ex: Throwable) = {}
+      override def error(ex: Throwable) = {}
       override val backoffMaxTimeMs = 10 * 1000L
 
       val latch = new CountDownLatch(1)
