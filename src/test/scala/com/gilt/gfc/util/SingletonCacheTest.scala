@@ -60,12 +60,13 @@ class SingletonCacheTest extends FunSuite with Matchers {
     cache("two") { val2 }
 
     val asMap = cache.asMap[UUID]
+    asMap.size shouldBe 2
     asMap.get("one") shouldBe Some(val1)
     asMap.get("two") shouldBe Some(val2)
 
     cache("three") { UUID.randomUUID() }
 
-    asMap.size shouldBe 2
+    asMap.size shouldBe 3
     cache.asMap.size shouldBe 3
   }
 }

@@ -2,6 +2,7 @@ package com.gilt.gfc.util
 
 import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConverters._
+import scala.collection.Map
 
 /**
  * For objects that need their lifecycle to be managed and can't be just throw-away.
@@ -28,9 +29,7 @@ class SingletonCache[K] {
 
   def values[V]: Iterable[V] = instanceCache.values.map(_.instance.asInstanceOf[V])
 
-  def asMap[V]: Map[K, V] = instanceCache.toMap.map {
-    case (k, v) => k -> v.instance.asInstanceOf[V]
-  }
+  def asMap[V]: Map[K, V] = instanceCache.mapValues(_.instance.asInstanceOf[V])
 
   // scala has a nice 'lazy' implementation that is both efficient and safe,
   // based on oft-criticized double-checked lock pattern except that it's actually done correctly:)
