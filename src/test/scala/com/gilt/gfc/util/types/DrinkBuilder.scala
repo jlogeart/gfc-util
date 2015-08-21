@@ -33,32 +33,23 @@ class DrinkBuilder[M <: BuilderMethods] private (glass: Option[Glass],
                                                  spirit: Option[Spirit],
                                                  mixer: Option[Mixer],
                                                  isDouble: Boolean) {
-  def withGlass(g: Glass)
-               (implicit ev: M#GlassCalled =:= TFalse) = {
+  def withGlass(g: Glass)(implicit ev: M#GlassCalled =:= TFalse) = {
     new DrinkBuilder[M {type GlassCalled = TTrue}](Some(g), spirit, mixer, isDouble)
   }
   
-  def withWhisky()
-                (implicit ev1: M#WhiskyCalled =:= TFalse,
-                          ev2: M#GinCalled =:= TFalse) = {
+  def withWhisky()(implicit ev: Not[M#WhiskyCalled || M#GinCalled] =:= TTrue) = {
     new DrinkBuilder[M {type WhiskyCalled = TTrue}](glass, Some(Whisky), mixer, isDouble)
   }
 
-  def withGin()
-             (implicit ev1: M#WhiskyCalled =:= TFalse,
-                       ev2: M#GinCalled =:= TFalse) = {
+  def withGin()(implicit ev: Not[M#WhiskyCalled || M#GinCalled] =:= TTrue) = {
     new DrinkBuilder[M {type GinCalled = TTrue}](glass, Some(Gin), mixer, isDouble)
   }
 
-  def withCoke()
-              (implicit ev1: M#WhiskyCalled =:= TTrue,
-                        ev2: M#MixerCalled =:= TFalse) = {
+  def withCoke()(implicit ev: M#WhiskyCalled && Not[M#MixerCalled] =:= TTrue) = {
     new DrinkBuilder[M {type MixerCalled = TTrue}](glass, spirit, Some(Coke), isDouble)
   }
 
-  def withTonic()
-               (implicit ev1: M#GinCalled =:= TTrue,
-                         ev2: M#MixerCalled =:= TFalse) = {
+  def withTonic()(implicit ev: M#GinCalled && Not[M#MixerCalled] =:= TTrue) = {
     new DrinkBuilder[M {type MixerCalled = TTrue}](glass, spirit, Some(Tonic), isDouble)
   }
 
@@ -66,8 +57,7 @@ class DrinkBuilder[M <: BuilderMethods] private (glass: Option[Glass],
     new DrinkBuilder[M](glass, spirit, mixer, true)
   }
   
-  def build()(implicit ev1: M#GlassCalled =:= TTrue,
-                       ev2: M#WhiskyCalled || M#GinCalled =:= TTrue) = {
+  def build()(implicit ev: M#GlassCalled && (M#WhiskyCalled || M#GinCalled) =:= TTrue) = {
     OrderOfDrink(glass.get, spirit.get, mixer, isDouble)
   }
 }
