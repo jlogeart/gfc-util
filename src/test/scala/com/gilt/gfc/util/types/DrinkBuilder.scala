@@ -1,7 +1,7 @@
 package com.gilt.gfc.util.types
 
 /**
- * Sample Typesafe Builder, using metascala phantom types.
+ * Sample typesafe Builder, using church-encoded boolean phantom types.
  *
  * Inspired by
  * http://blog.rafaelferreira.net/2008/07/type-safe-builder-pattern-in-scala.html and
