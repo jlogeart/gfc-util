@@ -1,4 +1,4 @@
-package com.gilt.gfc.util.metascala
+package com.gilt.gfc.util.types
 
 /**
  * Sample Typesafe Builder, using metascala phantom types.

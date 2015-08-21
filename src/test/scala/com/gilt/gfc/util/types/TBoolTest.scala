@@ -1,4 +1,4 @@
-package com.gilt.gfc.util.metascala
+package com.gilt.gfc.util.types
 
 import org.scalatest.{FunSuite, Matchers}
 

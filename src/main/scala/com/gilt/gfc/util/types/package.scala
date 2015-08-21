@@ -11,7 +11,7 @@ package com.gilt.gfc.util
  * @author Gregor Heine
  * @since 20/Aug/2015 22:50
  */
-package object metascala {
+package object types {
   sealed trait TBool {
     type If[T <: Up, F <: Up, Up] <: Up
   }
