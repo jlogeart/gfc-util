@@ -7,7 +7,7 @@ import scala.concurrent.duration._
  */
 @deprecated("Use the more flexible Retry functions", "0.1.0")
 trait ExponentialBackoff {
-  def error(ex: Throwable): Unit
+  protected def error(ex: Throwable): Unit
 
   /**
    * Optional setting to wait a minimum time before a retry, defaulting to 1ms
