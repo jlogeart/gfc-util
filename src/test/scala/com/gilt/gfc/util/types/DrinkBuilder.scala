@@ -1,7 +1,7 @@
 package com.gilt.gfc.util.types
 
 /**
- * Sample typesafe Builder, using church-encoded boolean phantom types.
+ * Example for a type-safe compile-time checked Builder, using church-encoded boolean types.
  *
  * Inspired by
  * http://blog.rafaelferreira.net/2008/07/type-safe-builder-pattern-in-scala.html and
@@ -37,7 +37,7 @@ class DrinkBuilder[M <: BuilderMethods] private (glass: Option[Glass],
     new DrinkBuilder[M {type GlassCalled = TTrue}](Some(g), spirit, mixer, isDouble)
   }
   
-  def withWhisky()(implicit ev: Not[M#WhiskyCalled || M#GinCalled] =:= TTrue) = {
+  def withWhisky()(implicit ev: M#WhiskyCalled || M#GinCalled =:= TFalse) = {
     new DrinkBuilder[M {type WhiskyCalled = TTrue}](glass, Some(Whisky), mixer, isDouble)
   }
 
@@ -63,9 +63,9 @@ class DrinkBuilder[M <: BuilderMethods] private (glass: Option[Glass],
 }
 
 object DrinkBuilder {
-  def apply() = new DrinkBuilder[BuilderMethods { type GlassCalled = TFalse;
-                                                  type WhiskyCalled = TFalse;
-                                                  type GinCalled = TFalse;
+  def apply() = new DrinkBuilder[BuilderMethods { type GlassCalled = TFalse
+                                                  type WhiskyCalled = TFalse
+                                                  type GinCalled = TFalse
                                                   type MixerCalled = TFalse }
     ](None, None, None, false)
 }
