@@ -1,12 +1,9 @@
 package com.gilt.gfc.util
 
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.LockSupport
 
 import scala.annotation.tailrec
 import scala.concurrent.duration._
-import scala.util.{Success, Failure, Try}
-import scala.util.control.NonFatal
 
 /**
  * Helper to retry potentially failing functions
@@ -29,12 +26,13 @@ object Retry {
   def retry[T](maxRetryTimes: Long = Long.MaxValue)
               (f: => T)
               (implicit log: Throwable => Unit = _.printStackTrace): T = {
-    Try(f) match {
-      case Success(t) => t
-      case Failure(NonFatal(e)) if maxRetryTimes > 0 =>
+    try (f) catch {
+      case e: Exception =>
+        if (maxRetryTimes <= 0) {
+          throw e
+        }
         log(e)
         retry(maxRetryTimes - 1)(f)(log)
-      case Failure(t) => throw t
     }
   }
 
@@ -66,9 +64,11 @@ object Retry {
                                   (f: => T)
                                   (implicit log: Throwable => Unit = _.printStackTrace): T = {
     require(exponentFactor >= 1.0)
-    Try(f) match {
-      case Success(t) => t
-      case Failure(NonFatal(e)) if (maxRetryTimes > 0 && !maxRetryTimeout.isOverdue) =>
+    try (f) catch {
+      case e: Exception =>
+        if (maxRetryTimes <= 0 || maxRetryTimeout.isOverdue) {
+          throw e
+        }
         log(e)
         val delay = Seq(initialDelay, maxDelay, maxRetryTimeout.timeLeft).min
         val delayNs = delay.toNanos
@@ -83,7 +83,6 @@ object Retry {
           }
         }
         retryWithExponentialDelay(maxRetryTimes - 1, maxRetryTimeout, delay * exponentFactor, maxDelay, exponentFactor)(f)(log)
-      case Failure(t) => throw t
     }
   }
 }

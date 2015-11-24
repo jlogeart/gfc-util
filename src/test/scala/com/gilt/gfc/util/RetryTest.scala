@@ -25,6 +25,17 @@ class RetryTest extends FunSuite with Matchers {
     thrown.getMessage shouldBe "crash"
   }
 
+  test("retry should retry code throwing InterruptedException") {
+    val functions: Iterator[() => String] = Iterator(() => throw new InterruptedException("interrupt"), succeedF _)
+    Retry.retry(maxRetryTimes = 1)(functions.next.apply) shouldBe "yay"
+  }
+
+  test("retry should re-throw an Error") {
+    val functions: Iterator[() => String] = Iterator(() => throw new OutOfMemoryError("oom"), succeedF _)
+    val thrown = the [OutOfMemoryError] thrownBy Retry.retry(maxRetryTimes = 1)(functions.next.apply)
+    thrown.getMessage shouldBe "oom"
+  }
+
   test("retryWithExponentialDelay should retry function until it succeeds") {
     val functions: Iterator[() => String] = Iterator(failF1 _, failF1 _, failF1 _, succeedF _)
 
@@ -85,4 +96,14 @@ class RetryTest extends FunSuite with Matchers {
     timeDeltas(6) shouldBe 520L +- 20L
   }
 
+  test("retryWithExponentialDelay should retry code throwing InterruptedException") {
+    val functions: Iterator[() => String] = Iterator(() => throw new InterruptedException("interrupt"), succeedF _)
+    Retry.retryWithExponentialDelay(maxRetryTimes = 1)(functions.next.apply) shouldBe "yay"
+  }
+
+  test("retryWithExponentialDelay should re-throw an Error") {
+    val functions: Iterator[() => String] = Iterator(() => throw new OutOfMemoryError("oom"), succeedF _)
+    val thrown = the [OutOfMemoryError] thrownBy Retry.retryWithExponentialDelay(maxRetryTimes = 1)(functions.next.apply)
+    thrown.getMessage shouldBe "oom"
+  }
 }
