@@ -13,18 +13,18 @@ package com.gilt.gfc.util
  */
 package object types {
   sealed trait TBool {
-    type If[T <: Up, F <: Up, Up] <: Up
+    type If[T <: TBool, F <: TBool] <: TBool
   }
 
-  sealed trait TTrue extends TBool {
-    type If[T <: Up, F <: Up, Up] = T
+  trait TTrue extends TBool {
+    type If[T <: TBool, F <: TBool] = T
   }
 
-  sealed trait TFalse extends TBool {
-    type If[T <: Up, F <: Up, Up] = F
+  trait TFalse extends TBool {
+    type If[T <: TBool, F <: TBool] = F
   }
 
-  type &&[A <: TBool, B <: TBool] = A#If[B, TFalse, TBool]
-  type || [A <: TBool, B <: TBool] = A#If[TTrue, B, TBool]
-  type Not[A <: TBool] = A#If[TFalse, TTrue, TBool]
+  type && [A <: TBool, B <: TBool] = A#If[B, TFalse]
+  type || [A <: TBool, B <: TBool] = A#If[TTrue, B]
+  type Not[A <: TBool] = A#If[TFalse, TTrue]
 }
