@@ -14,4 +14,17 @@ object Throwables {
     }
     rootCause(t, Set.empty)
   }
+
+  def messages(t: Throwable): Seq[String] = {
+    @tailrec def messages(t: Throwable, acc1: Set[Throwable], acc2: List[String]): Seq[String] = {
+      val msgs = Option(t.getMessage).fold(acc2)(acc2 ::)
+      val cause = Option(t.getCause).filterNot(acc1.contains)
+      if (cause.isDefined) {
+        messages(cause.get, acc1 + t, msgs)
+      } else {
+        msgs
+      }
+    }
+    messages(t, Set.empty, Nil).reverse.distinct
+  }
 }
