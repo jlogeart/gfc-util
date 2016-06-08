@@ -1,4 +1,4 @@
-# gfc-util [![Build Status](https://travis-ci.org/gilt/gfc-util.svg?branch=master)](https://travis-ci.org/gilt/gfc-util) [![Coverage Status](https://coveralls.io/repos/gilt/gfc-util/badge.svg?branch=master&service=github)](https://coveralls.io/github/gilt/gfc-util?branch=master)
+# gfc-util [![Build Status](https://travis-ci.org/gilt/gfc-util.svg?branch=master)](https://travis-ci.org/gilt/gfc-util) [![Coverage Status](https://coveralls.io/repos/gilt/gfc-util/badge.svg?branch=master&service=github)](https://coveralls.io/github/gilt/gfc-util?branch=master) [![Join the chat at https://gitter.im/gilt/gfc](https://badges.gitter.im/gilt/gfc.svg)](https://gitter.im/gilt/gfc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A library that contains a few scala utility classes. Part of the gilt foundation classes.
 
