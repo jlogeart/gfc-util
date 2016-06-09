@@ -11,7 +11,8 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.10",
   "com.gilt" %% "gfc-time" % "0.0.5" % "test",
   "org.scalatest" %% "scalatest" % "2.2.5" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
+  "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
+  "org.mockito" % "mockito-core" % "1.10.19" % "test"
 )
 
 releaseCrossBuild := true
