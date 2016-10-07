@@ -2,9 +2,9 @@ name := "gfc-util"
 
 organization := "com.gilt"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.11.7", "2.10.5")
+crossScalaVersions := Seq("2.11.8", "2.10.6")
 
 libraryDependencies ++= Seq(
   "com.gilt" %% "gfc-collection" % "0.0.3",
