@@ -2,8 +2,20 @@
 
 A library that contains a few scala utility classes. Part of the gilt foundation classes.
 
-## Example Usage
+## Getting gfc-util
 
+The latest version is 0.1.6, which is cross-built against Scala 2.10.x, 2.11.x and 2.12.0-RC1.
+
+If you're using SBT, add the following line to your build file:
+
+```scala
+libraryDependencies += "com.gilt" %% "gfc-util" % "0.1.6"
+```
+
+For Maven and other build tools, you can visit [search.maven.org](http://search.maven.org/#search%7Cga%7C1%7Ccom.gilt%20gfc).
+(This search will also list other available libraries from the gilt fundation classes.)
+
+## Contents and Example Usage
 
 ### com.gilt.gfc.util.Retry
 
