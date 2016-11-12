@@ -1,15 +1,15 @@
 # gfc-util [![Build Status](https://travis-ci.org/gilt/gfc-util.svg?branch=master)](https://travis-ci.org/gilt/gfc-util) [![Coverage Status](https://coveralls.io/repos/gilt/gfc-util/badge.svg?branch=master&service=github)](https://coveralls.io/github/gilt/gfc-util?branch=master) [![Join the chat at https://gitter.im/gilt/gfc](https://badges.gitter.im/gilt/gfc.svg)](https://gitter.im/gilt/gfc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A library that contains a few scala utility classes. Part of the gilt foundation classes.
+A library that contains a few scala utility classes. Part of the [Gilt Foundation Classes](https://github.com/gilt?query=gfc).
 
 ## Getting gfc-util
 
-The latest version is 0.1.6, which is cross-built against Scala 2.10.x, 2.11.x and 2.12.0-RC1.
+The latest version is 0.1.7, which is cross-built against Scala 2.10.x, 2.11.x and 2.12.X.
 
 If you're using SBT, add the following line to your build file:
 
 ```scala
-libraryDependencies += "com.gilt" %% "gfc-util" % "0.1.6"
+libraryDependencies += "com.gilt" %% "gfc-util" % "0.1.7"
 ```
 
 For Maven and other build tools, you can visit [search.maven.org](http://search.maven.org/#search%7Cga%7C1%7Ccom.gilt%20gfc).
