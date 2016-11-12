@@ -4,7 +4,7 @@ A library that contains a few scala utility classes. Part of the [Gilt Foundatio
 
 ## Getting gfc-util
 
-The latest version is 0.1.7, which is cross-built against Scala 2.10.x, 2.11.x and 2.12.X.
+The latest version is 0.1.7, which is cross-built against Scala 2.10.x, 2.11.x and 2.12.x.
 
 If you're using SBT, add the following line to your build file:
 
