@@ -4,12 +4,12 @@ A library that contains a few scala utility classes. Part of the [Gilt Foundatio
 
 ## Getting gfc-util
 
-The latest version is 0.1.7, which is cross-built against Scala 2.10.x, 2.11.x and 2.12.x.
+The latest version is 0.2.0, which is cross-built against Scala 2.10.x, 2.11.x and 2.12.x.
 
 If you're using SBT, add the following line to your build file:
 
 ```scala
-libraryDependencies += "com.gilt" %% "gfc-util" % "0.1.7"
+libraryDependencies += "com.gilt" %% "gfc-util" % "0.2.0"
 ```
 
 For Maven and other build tools, you can visit [search.maven.org](http://search.maven.org/#search%7Cga%7C1%7Ccom.gilt%20gfc).
@@ -41,6 +41,45 @@ val contents: Seq[String] = retryWithExponentialDelay(maxRetryTimes = 10,
                                                       exponentFactor = 2)
                                                      (readFile)
 ```
+
+Allows a retry of a function `I => O` via a function `I => Either[I, O]`:
+```scala
+val arr: Array[Boolean] = Array.fill(5)(false)
+
+// Up to 10 times, set a random array index to 'true' and 
+// return "success" when all array elements are 'true', or throw 'TooManyRetries'
+Retry.retryFold(maxRetryTimes = 10)(arr){ a: Array[Boolean] =>
+  if (a.forall(identity)) {
+    Right("success")
+  } else {
+    a(scala.util.Random.nextInt(a.length)) = true
+    Left(a)
+  }
+}
+```
+```scala
+// Set a random array index to 'true' and return "success" when all array elements are 'true'.
+// Retry this up to 10 times until it succeeds, with an exponential backoff,
+// starting at 10 ms and doubling each iteration until it reaches 1 second, i.e.
+// 10ms, 20ms, 40ms, 80ms, 160ms, 320ms, 640ms, 1s, 1s, 1s, or throw 'TooManyRetries'
+def func(a: Array[Boolean]): Either[Array[Boolean], String] = {
+  if (a.forall(identity)) {
+    Right("success")
+  } else {
+    a(scala.util.Random.nextInt(a.length)) = true
+    Left(a)
+  }
+}
+
+val result: String = retryFoldWithExponentialDelay(maxRetryTimes = 10,
+                                                   maxRetryTimeout = 5 minutes fromNow,
+                                                   initialDelay = 10 millis,
+                                                   maxDelay = 1 second,
+                                                   exponentFactor = 2)
+                                                  (arr)
+                                                  (func)
+```
+
 
 ### com.gilt.gfc.util.RateLimiter and com.gilt.gfc.util.ThreadSafeRateLimiter
 
