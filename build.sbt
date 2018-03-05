@@ -1,3 +1,5 @@
+import scoverage.ScoverageKeys
+
 name := "gfc-util"
 
 organization := "com.gilt"
@@ -18,6 +20,10 @@ libraryDependencies ++= Seq(
   "org.scalacheck" %% "scalacheck" % "1.13.5" % Test,
   "org.mockito" % "mockito-core" % "1.10.19" % Test
 )
+
+ScoverageKeys.coverageFailOnMinimum := true
+
+ScoverageKeys.coverageMinimum := 95.7
 
 releaseCrossBuild := true
 

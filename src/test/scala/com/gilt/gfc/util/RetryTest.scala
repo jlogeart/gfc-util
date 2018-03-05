@@ -106,4 +106,29 @@ class RetryTest extends FunSuite with Matchers {
     val thrown = the [OutOfMemoryError] thrownBy Retry.retryWithExponentialDelay(maxRetryTimes = 1)(functions.next.apply)
     thrown.getMessage shouldBe "oom"
   }
+
+  test("retryFold should retry function until it succeeds") {
+    Retry.retryFold()(0)(i =>
+      if (i == 10) Right("yay")
+      else Left(i + 1)
+    ) shouldBe "yay"
+  }
+
+  test("retryFold should retry until maxRetries") {
+    val thrown = the [Exception] thrownBy Retry.retryFold(1)(0)(i => Left(i))
+    thrown shouldBe Retry.TooManyRetries
+  }
+
+  test("retryFoldWithExponentialDelay should retry function until it succeeds") {
+    Retry.retryFoldWithExponentialDelay()(0)(i =>
+      if (i == 10) Right("yay")
+      else Left(i + 1)
+    ) shouldBe "yay"
+  }
+
+  test("retryFoldWithExponentialDelay should retry until maxRetries") {
+    val thrown = the [Exception] thrownBy Retry.retryFoldWithExponentialDelay(maxRetryTimes = 1)(0)(i => Left(i))
+    thrown shouldBe Retry.TooManyRetries
+  }
+
 }

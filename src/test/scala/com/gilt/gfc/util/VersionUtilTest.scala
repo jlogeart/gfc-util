@@ -3,8 +3,9 @@ package com.gilt.gfc.util
 import java.io.{FileOutputStream, File}
 import java.net.URL
 import java.util.jar.{Attributes, Manifest => JManifest}
+
 import org.scalatest.FunSuite
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 
 class VersionUtilTest extends FunSuite with MockitoSugar {
