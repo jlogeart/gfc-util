@@ -115,8 +115,16 @@ class RetryTest extends FunSuite with Matchers {
   }
 
   test("retryFold should retry until maxRetries") {
-    val thrown = the [Exception] thrownBy Retry.retryFold(1)(0)(i => Left(i))
-    thrown shouldBe Retry.TooManyRetries
+    val thrown = the [Retry.TooManyRetries[Int]] thrownBy Retry.retryFold(1)(0)(i => Left(i+1))
+    thrown.lastInput shouldBe 2
+    thrown.wrapped shouldBe None
+  }
+
+  test("retryFold should wrap the underlying Exception") {
+    val ex = new RuntimeException("boom")
+    val thrown = the [Retry.TooManyRetries[Int]] thrownBy Retry.retryFold(1)(0)(i => throw ex)
+    thrown.lastInput shouldBe 0
+    thrown.wrapped shouldBe Some(ex)
   }
 
   test("retryFoldWithExponentialDelay should retry function until it succeeds") {
@@ -127,8 +135,15 @@ class RetryTest extends FunSuite with Matchers {
   }
 
   test("retryFoldWithExponentialDelay should retry until maxRetries") {
-    val thrown = the [Exception] thrownBy Retry.retryFoldWithExponentialDelay(maxRetryTimes = 1)(0)(i => Left(i))
-    thrown shouldBe Retry.TooManyRetries
+    val thrown = the [Retry.TooManyRetries[Int]] thrownBy Retry.retryFoldWithExponentialDelay(maxRetryTimes = 1)(0)(i => Left(i+1))
+    thrown.lastInput shouldBe 2
+    thrown.wrapped shouldBe None
   }
 
+  test("retryFoldWithExponentialDelay should wrap the underlying Exception") {
+    val ex = new RuntimeException("boom")
+    val thrown = the [Retry.TooManyRetries[Int]] thrownBy Retry.retryFoldWithExponentialDelay(maxRetryTimes = 1)(0)(i => throw ex)
+    thrown.lastInput shouldBe 0
+    thrown.wrapped shouldBe Some(ex)
+  }
 }

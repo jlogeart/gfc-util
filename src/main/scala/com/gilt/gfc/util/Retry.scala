@@ -12,7 +12,7 @@ import scala.concurrent.duration._
  * @since 10/Apr/2015 16:55
  */
 object Retry {
-  case object TooManyRetries extends RuntimeException
+  case class TooManyRetries[I](lastInput: I, wrapped: Option[Exception]) extends RuntimeException
 
   /**
     * Given an input I, retries a function that returns either a new I or an O, until it returns an O or a maximum number of retries has been reached.
@@ -34,12 +34,12 @@ object Retry {
     (try f(i) catch {
       case e: Exception =>
         if (maxRetryTimes <= 0) {
-          throw e
+          throw TooManyRetries(i, Some(e))
         }
         log(e)
         Left(i)
     }) match {
-      case Left(_) if maxRetryTimes <= 0 => throw TooManyRetries
+      case Left(i1) if maxRetryTimes <= 0 => throw TooManyRetries(i1, None)
       case Left(i1) => retryFold(maxRetryTimes - 1)(i1)(f)
       case Right(o) => o
     }
@@ -58,11 +58,15 @@ object Retry {
   def retry[T](maxRetryTimes: Long = Long.MaxValue)
               (f: => T)
               (implicit log: Throwable => Unit = _.printStackTrace): T =
-    retryFold(
-      maxRetryTimes
-    )(())(_ =>
-      Right(f)
-    )(log)
+    try {
+      retryFold(
+        maxRetryTimes
+      )(())(_ =>
+        Right(f)
+      )(log)
+    } catch {
+      case TooManyRetries(_, Some(e)) => throw e
+    }
 
   /**
     * Given an input I, retries a function that returns either a new I or an O, until it returns an O, a maximum number of retries has been
@@ -97,7 +101,7 @@ object Retry {
     (try (f(i)) catch {
       case e: Exception =>
         if (maxRetryTimes <= 0 || maxRetryTimeout.isOverdue) {
-          throw e
+          throw TooManyRetries(i, Some(e))
         }
         log(e)
         val delayNs = delay.toNanos
@@ -113,7 +117,7 @@ object Retry {
         }
         Left(i)
     }) match {
-      case Left(_) if maxRetryTimes <= 0 => throw TooManyRetries
+      case Left(i1) if maxRetryTimes <= 0 => throw TooManyRetries(i1, None)
       case Left(i1) => retryFoldWithExponentialDelay(maxRetryTimes - 1, maxRetryTimeout, delay * exponentFactor, maxDelay, exponentFactor)(i1)(f)(log)
       case Right(o) => o
     }
@@ -145,9 +149,13 @@ object Retry {
                                    exponentFactor: Double = 2)
                                   (f: => T)
                                   (implicit log: Throwable => Unit = _.printStackTrace): T =
-    retryFoldWithExponentialDelay(
-      maxRetryTimes, maxRetryTimeout, initialDelay, maxDelay, exponentFactor
-    )(())(_ =>
-      Right(f)
-    )(log)
+    try {
+      retryFoldWithExponentialDelay(
+        maxRetryTimes, maxRetryTimeout, initialDelay, maxDelay, exponentFactor
+      )(())(_ =>
+        Right(f)
+      )(log)
+    } catch {
+      case TooManyRetries(_, Some(e)) => throw e
+    }
 }
